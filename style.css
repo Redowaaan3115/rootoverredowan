@@ -1,0 +1,75 @@
+:root {
+  --blur: 20px;
+  --text: #fff;
+  --bg: rgba(255,255,255,0.05);
+  --card: rgba(255,255,255,0.12);
+  --font-main: 'Poppins', sans-serif;
+}
+body {
+  margin: 0;
+  background: #000;
+  color: var(--text);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+}
+#background {
+  position: fixed;
+  inset: 0;
+  background: url('assets/default-bg.jpg') center/cover;
+  filter: blur(var(--blur));
+  z-index: -1;
+}
+.glass {
+  background: var(--bg);
+  backdrop-filter: blur(15px) saturate(180%);
+}
+.nav {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard {
+  margin-top: 90px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.card {
+  background: var(--card);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+.card:hover {
+  transform: scale(1.03);
+}
+.panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 350px;
+  height: 100vh;
+  padding: 20px;
+  overflow-y: auto;
+}
+.hidden { display: none; }
+.center {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+.btn {
+  padding: 10px 20px;
+  border: none;
+  background: #444;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+}
