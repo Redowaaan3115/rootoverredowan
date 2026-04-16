@@ -1,0 +1,21 @@
+<script>
+window.startVisualizer = (audio) => {
+  const ctx = new AudioContext();
+  const analyser = ctx.createAnalyser();
+  const source = ctx.createMediaElementSource(audio);
+
+  source.connect(analyser);
+  analyser.connect(ctx.destination);
+
+  analyser.fftSize = 256;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+    console.log(dataArray[0]);
+  }
+  draw();
+};
+</script>
