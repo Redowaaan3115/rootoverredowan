@@ -1,0 +1,7 @@
+<script>
+window.saveSettings = () => {
+  const key = document.getElementById('ai-key').value;
+  if (key) localStorage.setItem('geminiKey', key);
+  alert('Settings saved!');
+};
+</script>
