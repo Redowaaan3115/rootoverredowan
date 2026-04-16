@@ -1,0 +1,19 @@
+<script>
+window.addXP = (amount) => {
+  let xp = parseInt(localStorage.getItem('xp') || 0);
+  xp += amount;
+  localStorage.setItem('xp', xp);
+};
+
+window.updateStreak = () => {
+  const today = new Date().toDateString();
+  const last = localStorage.getItem('lastStudy');
+  let streak = parseInt(localStorage.getItem('streak') || 0);
+
+  if (last !== today) {
+    streak++;
+    localStorage.setItem('streak', streak);
+    localStorage.setItem('lastStudy', today);
+  }
+};
+</script>
