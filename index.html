@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusOS — Phase 5 Ultimate</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+  <div id="auth" class="center">
+    <h1>Welcome to FocusOS</h1>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button class="btn" onclick="register()">Register</button>
+    <button class="btn" onclick="login()">Login</button>
+  </div>
+
+  <div id="app" class="hidden">
+
+    <header class="nav glass">
+      <h1>FocusOS</h1>
+      <nav>
+        <button onclick="toggleTheme()">Theme</button>
+        <button onclick="openSettings()">Settings</button>
+        <button onclick="openAI()">AI</button>
+        <button onclick="openChat()">Chat</button>
+        <button onclick="openAnalytics()">Analytics</button>
+        <button onclick="logout()">Logout</button>
+      </nav>
+    </header>
+
+    <div id="background"></div>
+
+    <section class="dashboard">
+      <div class="card" onclick="openPomodoro()">Pomodoro</div>
+      <div class="card" onclick="openStopwatch()">Stopwatch</div>
+      <div class="card" onclick="openAlarms()">Alarms</div>
+      <div class="card" onclick="openTodo()">To-Do</div>
+      <div class="card" onclick="openMusic()">Music Player</div>
+      <div class="card" onclick="openNature()">Nature Sounds</div>
+      <div class="card" onclick="openUploads()">My Uploads</div>
+    </section>
+
+    <section id="panel-container"></section>
+
+    <!-- AI Assistant -->
+    <aside id="ai-panel" class="panel hidden glass">
+      <h2>AI Study Assistant</h2>
+      <div id="ai-output"></div>
+      <textarea id="ai-input" placeholder="Ask me anything..."></textarea>
+      <button onclick="sendToAI()">Send</button>
+    </aside>
+
+    <!-- Group Chat -->
+    <aside id="chat-panel" class="panel hidden glass">
+      <h2>Study Group Chat</h2>
+      <div id="chat-box"></div>
+      <input id="chat-input" placeholder="Message" />
+      <button onclick="sendChat()">Send</button>
+    </aside>
+
+    <!-- Settings -->
+    <aside id="settings-panel" class="panel hidden glass">
+      <h2>Settings</h2>
+      <label>Blur Amount</label>
+      <input type="range" min="0" max="30" id="blur-range" />
+
+      <label>Theme</label>
+      <select id="theme-select" onchange="applyTheme()"></select>
+
+      <label>Font</label>
+      <select id="font-select" onchange="applyFont()"></select>
+
+      <button onclick="saveSettings()">Save</button>
+    </aside>
+
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script src="script.js"></script>
+  <script src="ai.js"></script>
+  <script src="chat.js"></script>
+  <script src="analytics.js"></script>
+  <script src="settings.js"></script>
+  <script src="theme.js"></script>
+  <script src="music.js"></script>
+  <script src="sw.js"></script>
+</body>
+</html>
+
