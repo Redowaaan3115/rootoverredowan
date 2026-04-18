@@ -1,7 +1,0 @@
-<script>
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 'k') openAI();
-  if (e.ctrlKey && e.key === 'm') openMusic();
-  if (e.ctrlKey && e.key === 'c') openChat();
-});
-</script>
