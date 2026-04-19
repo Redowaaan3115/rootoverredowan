@@ -1,11 +1,60 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Focus OS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FocusOS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background -->
+  <div id="bg"></div>
+
+  <!-- Main UI -->
+  <div class="container">
+
+    <h1>🔥 FocusOS</h1>
+
+    <!-- Timer -->
+    <div class="card">
+      <h2>Pomodoro Timer</h2>
+      <h1 id="timer">25:00</h1>
+      <button onclick="startTimer()">Start</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+
+    <!-- Todo -->
+    <div class="card">
+      <h2>To-Do</h2>
+      <input id="todoInput" placeholder="Enter task & press Enter">
+      <div id="todoList"></div>
+    </div>
+
+    <!-- Music -->
+    <div class="card">
+      <h2>Music</h2>
+      <input type="file" id="musicUpload">
+      <audio id="player" controls></audio>
+    </div>
+
+    <!-- AI -->
+    <div class="card">
+      <h2>AI Assistant</h2>
+      <div id="chat"></div>
+      <input id="aiInput" placeholder="Ask something...">
+      <button onclick="askAI()">Send</button>
+    </div>
+
+    <!-- Settings -->
+    <div class="card">
+      <h2>Settings</h2>
+      <button onclick="toggleTheme()">Toggle Theme</button>
+      <input id="apiKey" placeholder="Paste Gemini API Key">
+      <button onclick="saveKey()">Save Key</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
