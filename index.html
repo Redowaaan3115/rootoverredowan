@@ -3,247 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAPTOR OS // AIR SUPERIORITY STUDY DECK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>RAPTOR OS // COMBAT READY</title>
     <style>
         :root {
-            --raptor-cyan: #00f2ff;
-            --raptor-red: #ff3c3c;
-            --bg-dark: #020508;
-            --glass: rgba(0, 242, 255, 0.05);
-            --border: rgba(0, 242, 255, 0.2);
+            --cyan: #00f2ff;
+            --alert-red: #ff3c3c;
+            --bg: #020508;
+            --glass: rgba(6, 15, 25, 0.85);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
 
         body {
-            background: var(--bg-dark);
-            color: var(--raptor-cyan);
-            font-family: 'JetBrains Mono', monospace;
-            height: 100vh;
+            background: var(--bg);
+            color: var(--cyan);
+            font-family: 'Courier New', monospace;
             overflow: hidden;
-            /* Hexagonal Grid Overlay */
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%),
-                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-        }
-
-        /* --- HUD SCANLINE EFFECT --- */
-        body::before {
-            content: " ";
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 999;
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        .cockpit-frame {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            grid-template-rows: 80px 1fr 100px;
-            gap: 20px;
-            padding: 20px;
+            margin: 0;
+            display: flex;
             height: 100vh;
         }
 
-        /* --- SHARED PANEL STYLE --- */
-        .mfd-panel {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            position: relative;
-            padding: 15px;
-            backdrop-filter: blur(2px);
-            transition: 0.3s;
-            clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 5% 100%, 0 95%);
+        /* --- RADAR ANIMATION --- */
+        @keyframes radar-sweep {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .radar-box { position: relative; width: 100px; height: 100px; border: 1px solid var(--cyan); border-radius: 50%; overflow: hidden; }
+        .radar-line { 
+            position: absolute; top: 50%; left: 50%; width: 50%; height: 2px; background: var(--cyan); 
+            transform-origin: left; animation: radar-sweep 4s linear infinite; 
         }
 
-        .mfd-panel:hover {
-            border-color: var(--raptor-cyan);
-            background: rgba(0, 242, 255, 0.08);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+        /* --- COMBAT MODE ANIMATION --- */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px var(--cyan); }
+            50% { box-shadow: 0 0 25px var(--alert-red); border-color: var(--alert-red); }
         }
+        .combat-mode { animation: pulse 2s infinite; }
 
-        .panel-header {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 5px;
-        }
+        /* --- LAYOUT --- */
+        .grid { display: grid; grid-template-columns: 250px 1fr 300px; gap: 15px; padding: 20px; width: 100%; }
+        .panel { background: var(--glass); border: 1px solid rgba(0, 242, 255, 0.2); padding: 20px; }
 
-        /* --- CENTER HUD (AI INTERFACE) --- */
-        .hud-center {
-            grid-column: 2; grid-row: 1 / 3;
-            display: flex; flex-direction: column; gap: 20px;
-        }
+        /* --- MUSIC PLAYER --- */
+        .radio-panel { grid-column: 1 / 4; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; }
+        iframe { border: none; height: 50px; width: 300px; }
 
-        .ai-core {
-            flex: 1;
-            display: flex; flex-direction: column;
-            border: 2px solid var(--raptor-cyan);
-            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.1);
-        }
-
-        #chat-output {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .input-bay {
-            display: flex;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-top: 1px solid var(--border);
-        }
-
-        input[type="text"] {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--raptor-cyan);
-            padding: 10px;
-            font-family: 'JetBrains Mono';
-            outline: none;
-        }
-
-        .btn-action {
-            background: var(--raptor-cyan);
-            color: black;
-            border: none;
-            padding: 0 20px;
-            font-family: 'Orbitron';
-            font-weight: bold;
-            font-size: 0.8rem;
-            cursor: pointer;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-        }
-
-        /* --- TACTICAL STATS --- */
-        .stat-bar {
-            height: 10px;
-            background: rgba(255,255,255,0.1);
-            margin: 10px 0;
-            position: relative;
-        }
-
-        .fill {
-            height: 100%;
-            background: var(--raptor-cyan);
-            width: 70%;
-            box-shadow: 0 0 10px var(--raptor-cyan);
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes blink { 50% { opacity: 0; } }
-        .cursor { animation: blink 1s infinite; }
-
+        .btn { padding: 10px 20px; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: var(--cyan); color: black; }
     </style>
 </head>
 <body>
 
-<div class="cockpit-frame">
-    <div class="mfd-panel">
-        <div class="panel-header"><span>INTEL_STATUS</span><span>01</span></div>
-        <div id="clock" style="font-size: 2rem; color: var(--raptor-cyan);">00:00:00</div>
-        <div style="margin-top: 20px;">
-            <p>PDF_ANALYSIS: IDLE</p>
-            <div class="stat-bar"><div class="fill" style="width: 40%;"></div></div>
-            <p>MEMORY_LOAD: 4GB</p>
-            <div class="stat-bar"><div class="fill" style="width: 85%;"></div></div>
-        </div>
-        <div style="margin-top: 40px;">
-            <p style="font-size: 0.7rem;">TARGET_OBJECTIVES:</p>
-            <ul style="list-style: none; font-size: 0.8rem; margin-top: 10px;">
-                <li>[ ] Physics_Ch_04</li>
-                <li>[ ] Calc_Integration</li>
-                <li>[X] UI_Design_Final</li>
-            </ul>
-        </div>
+<div class="grid">
+    <div class="panel">
+        <h3>RADAR SCAN</h3>
+        <div class="radar-box"><div class="radar-line"></div></div>
     </div>
 
-    <div class="hud-center">
-        <div class="mfd-panel ai-core">
-            <div class="panel-header"><span>RAPTOR_AI_V3.0</span><span>ONLINE</span></div>
-            <div id="chat-output">
-                <p>> SYSTEM: Raptor OS Booting...</p>
-                <p>> SYSTEM: Sensors Calibrated.</p>
-                <p>> RAPTOR: Pilot, upload study PDF to begin target acquisition.<span class="cursor">_</span></p>
-            </div>
-            <div class="input-bay">
-                <input type="text" id="user-input" placeholder="COMM_LINK_ESTABLISHED...">
-                <button class="btn-action" onclick="sendMessage()">SEND</button>
-            </div>
-        </div>
+    <div class="panel" id="main-panel">
+        <h1 id="timer">25:00</h1>
+        <button class="btn" onclick="startCombat()">ENGAGE COMBAT</button>
     </div>
 
-    <div class="mfd-panel">
-        <div class="panel-header"><span>COMBAT_TIMER</span><span>02</span></div>
-        <div style="text-align: center; margin-top: 50px;">
-            <h1 id="timer" style="font-size: 4rem; font-family: 'Orbitron';">25:00</h1>
-            <p style="letter-spacing: 5px;">ENGAGEMENT</p>
-            <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn-action" onclick="toggleTimer()" style="width: 100%;">INITIATE_LOCK</button>
-                <button class="btn-action" onclick="resetTimer()" style="width: 100%; background: transparent; color: var(--raptor-cyan); border: 1px solid var(--raptor-cyan);">ABORT</button>
-            </div>
-        </div>
+    <div class="panel">
+        <h3>SYSTEM_INTEL</h3>
+        <p>CPU LOAD: 12%</p>
+        <p>FOCUS LEVEL: OPTIMAL</p>
     </div>
 
-    <div class="mfd-panel" style="grid-column: 1 / 4; display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-size: 0.8rem;">COMMS: LOFI_STATION_ALPHA // 104.2 MHZ</div>
-        <div style="display: flex; gap: 20px;">
-            <span style="color: var(--raptor-red);">[ WARNING: NO DISTRACTIONS DETECTED ]</span>
-        </div>
+    <div class="panel radio-panel">
+        <div>LOFI_RADIO_FEED</div>
+        <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1" allow="autoplay"></iframe>
+        <div>VOL: 65%</div>
     </div>
 </div>
 
 <script>
-    // GOD-TIER INTERACTIVITY
-    function sendMessage() {
-        const input = document.getElementById('user-input');
-        const output = document.getElementById('chat-output');
-        if (input.value.trim() === "") return;
-
-        const userMsg = document.createElement('p');
-        userMsg.style.color = 'var(--text-dim)';
-        userMsg.textContent = `> PILOT: ${input.value}`;
-        output.appendChild(userMsg);
-
-        // Simulated AI Response logic
-        setTimeout(() => {
-            const aiMsg = document.createElement('p');
-            aiMsg.innerHTML = `> RAPTOR: Copy that. Target acquired. Analyzing "${input.value}"...`;
-            output.appendChild(aiMsg);
-            output.scrollTop = output.scrollHeight;
-        }, 600);
-
-        input.value = "";
+    function startCombat() {
+        const panel = document.getElementById('main-panel');
+        panel.classList.add('combat-mode');
+        // Logic to start timer goes here
     }
-
-    // CLOCK SCRIPT
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('clock').textContent = now.toLocaleTimeString();
-    }, 1000);
-
-    // POMODORO SCRIPT
-    let time = 1500; let active = false;
-    function toggleTimer() { active = !active; }
-    function resetTimer() { time = 1500; active = false; updateDisplay(); }
-    function updateDisplay() {
-        let m = Math.floor(time/60), s = time%60;
-        document.getElementById('timer').textContent = `${m}:${s < 10 ? '0'+s : s}`;
-    }
-    setInterval(() => { if(active && time > 0) { time--; updateDisplay(); } }, 1000);
 </script>
 
 </body>
