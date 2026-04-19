@@ -1,74 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus OS — F22 Hangar Edition</title>
+    <title>Raptor OS // Focus Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #03070b;
+            --panel-bg: rgba(6, 15, 25, 0.85);
+            --neon-cyan: #00f0ff;
+            --neon-cyan-dim: rgba(0, 240, 255, 0.2);
+            --text-main: #e0e6ed;
+            --text-dim: #5c7285;
+            --border-color: rgba(0, 240, 255, 0.15);
+        }
 
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/components.css">
-    <link rel="stylesheet" href="styles/theme-blue-neon.css">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(to bottom, rgba(3,7,11,0.2), var(--bg-base)),
+                url('https://images.unsplash.com/photo-1605553177890-50bba5e91eb7?q=80&w=2070&auto=format&fit=crop'); /* Jet Background */
+            background-size: cover;
+            background-position: top center;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 80px;
+            background: rgba(3, 7, 11, 0.95);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            z-index: 10;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            margin-bottom: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--neon-cyan);
+        }
+
+        .nav-icon {
+            width: 30px;
+            height: 30px;
+            border: 1px solid currentColor;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .dashboard {
+            flex: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: 60px auto 1fr 80px;
+            gap: 15px;
+            height: 100%;
+        }
+
+        /* --- TOP BAR --- */
+        .top-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .logo span { font-weight: 400; color: var(--text-dim); }
+
+        /* --- WIDGET PANELS --- */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Sci-fi corner brackets */
+        .panel::before, .panel::after {
+            content: ''; position: absolute; width: 10px; height: 10px;
+        }
+        .panel::before { top: -1px; left: -1px; border-top: 1px solid var(--neon-cyan); border-left: 1px solid var(--neon-cyan); }
+        .panel::after { bottom: -1px; right: -1px; border-bottom: 1px solid var(--neon-cyan); border-right: 1px solid var(--neon-cyan); }
+
+        h2.panel-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--neon-cyan-dim);
+            padding-bottom: 5px;
+        }
+
+        /* --- LEFT COLUMN --- */
+        .col-left { grid-column: 1 / 2; grid-row: 3 / 4; display: flex; flex-direction: column; gap: 15px; }
+
+        .mission-time .time {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 3.5rem;
+            line-height: 1;
+            margin: 10px 0;
+            text-shadow: 0 0 15px var(--neon-cyan-dim);
+        }
+        .mission-time .date { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 1px; }
+
+        .tasks-list { list-style: none; flex: 1; overflow-y: auto; }
+        .task-item {
+            display: flex; align-items: center; padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+        .task-item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: var(--neon-cyan);
+            cursor: pointer;
+        }
+
+        /* --- CENTER COLUMN (AI) --- */
+        .col-center { grid-column: 2 / 3; grid-row: 3 / 4; display: flex; flex-direction: column; gap: 15px; }
+        
+        .ai-chat { flex: 1; display: flex; flex-direction: column; }
+        .chat-history {
+            flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color);
+            padding: 15px; margin-bottom: 15px; overflow-y: auto; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem;
+        }
+        .msg-ai { color: var(--text-main); margin-bottom: 10px; border-left: 2px solid var(--neon-cyan); padding-left: 10px;}
+        .msg-user { color: var(--text-dim); text-align: right; margin-bottom: 10px; }
+        
+        .chat-input-area { display: flex; gap: 10px; align-items: center; }
+        .chat-input {
+            flex: 1; background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-main); padding: 10px; font-family: 'Share Tech Mono'; outline: none;
+        }
+        .chat-input:focus { border-color: var(--neon-cyan); }
+        .file-upload-btn, .send-btn {
+            background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan); padding: 10px 15px; cursor: pointer; text-transform: uppercase; font-weight: bold;
+        }
+        .file-upload-btn:hover, .send-btn:hover { background: var(--neon-cyan); color: #000; }
+
+        /* --- RIGHT COLUMN --- */
+        .col-right { grid-column: 3 / 4; grid-row: 3 / 4; display: flex; flex-direction: column; gap: 15px; }
+
+        .pomodoro { text-align: center; }
+        .pomo-time { font-family: 'Share Tech Mono', monospace; font-size: 3rem; margin: 15px 0; }
+        .pomo-controls button {
+            background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+            padding: 5px 15px; cursor: pointer; margin: 0 5px; font-family: 'Rajdhani';
+        }
+        .pomo-controls button:hover { background: var(--neon-cyan); color: #000; }
+
+        .stats-container { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; }
+        .stat-ring { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
+        .stat-ring svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .stat-ring circle { fill: none; stroke-width: 4; stroke-linecap: round; }
+        .stat-ring .bg { stroke: rgba(255,255,255,0.1); }
+        .stat-ring .progress { stroke: var(--neon-cyan); stroke-dasharray: 175; stroke-dashoffset: 40; } /* Change offset to fill */
+        .stat-label { font-family: 'Share Tech Mono'; font-size: 0.8rem; margin-top: 10px; }
+        .stat-value { position: absolute; font-family: 'Share Tech Mono'; font-size: 0.8rem; }
+
+        /* --- BOTTOM RADIO --- */
+        .bottom-bar {
+            grid-column: 1 / -1; grid-row: 4 / 5; display: flex; align-items: center; justify-content: space-between;
+        }
+        .music-player { display: flex; align-items: center; gap: 20px; width: 100%; }
+        .album-art { width: 40px; height: 40px; background: #222; border: 1px solid var(--border-color); }
+        .track-info .title { font-weight: bold; }
+        .track-info .artist { font-size: 0.8rem; color: var(--text-dim); }
+        .visualizer { flex: 1; height: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-end; gap: 2px;}
+        .bar { width: 4px; background: var(--neon-cyan); height: 50%; opacity: 0.7;}
+
+    </style>
 </head>
-
 <body>
 
-    <div id="background"></div>
+    <div class="sidebar">
+        <div class="nav-item active"><div class="nav-icon">D</div>Dash</div>
+        <div class="nav-item"><div class="nav-icon">P</div>Pomo</div>
+        <div class="nav-item"><div class="nav-icon">T</div>Task</div>
+        <div class="nav-item"><div class="nav-icon">A</div>AI</div>
+    </div>
 
-    <header class="top-bar">
-        <div class="logo">F-22 HANGAR OPS</div>
-        <div class="mode-switch">
-            <button id="themeToggle">NEON MODE</button>
+    <div class="dashboard">
+        <div class="top-bar">
+            <div class="logo">RAPTOR <span>OS</span></div>
+            <div style="color: var(--neon-cyan); font-family: 'Share Tech Mono';">SYSTEM STATUS: OPTIMAL</div>
         </div>
-    </header>
 
-    <main class="dashboard">
-
-        <section class="clock-panel glass">
-            <div id="clock" class="time-display">00:00:00</div>
-            <div id="date" class="date-display"></div>
-        </section>
-
-        <section class="pomodoro-panel glass">
-            <h2>POMODORO ENGINE</h2>
-            <div id="pomodoro-timer">25:00</div>
-            <div class="pomodoro-controls">
-                <button id="startPomodoro">Start</button>
-                <button id="pausePomodoro">Pause</button>
-                <button id="resetPomodoro">Reset</button>
+        <div class="col-left">
+            <div class="panel mission-time">
+                <h2 class="panel-title">Mission Time</h2>
+                <div class="time" id="clock">00:00:00</div>
+                <div class="date" id="date">LOADING...</div>
             </div>
-        </section>
 
-        <section class="tasks-panel glass">
-            <h2>MISSIONS</h2>
-            <div class="task-input">
-                <input type="text" id="taskInput" placeholder="Enter mission objective...">
-                <button id="addTask">+</button>
+            <div class="panel tasks" style="flex: 1;">
+                <h2 class="panel-title">Today's Tasks</h2>
+                <ul class="tasks-list">
+                    <li class="task-item"><input type="checkbox" checked> Deploy focus app</li>
+                    <li class="task-item"><input type="checkbox" checked> Refactor tasks system</li>
+                    <li class="task-item"><input type="checkbox"> Code AI panel</li>
+                    <li class="task-item"><input type="checkbox"> Review study PDF</li>
+                </ul>
             </div>
-            <ul id="taskList"></ul>
-        </section>
+        </div>
 
-        <section class="music-panel glass">
-            <h2>COCKPIT AUDIO</h2>
-            <audio id="audioPlayer" controls></audio>
-            <input type="file" id="uploadMusic" accept="audio/*">
-        </section>
+        <div class="col-center">
+            <div class="panel ai-chat">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="panel-title">AI Assistant</h2>
+                    <span style="font-size: 0.7rem; color: var(--text-dim); cursor: pointer;">CLEAR CHAT</span>
+                </div>
+                
+                <div class="chat-history">
+                    <div class="msg-ai">AI > System initialized. How can I assist your studies today, pilot?</div>
+                    <div class="msg-user">YOU > Give me a study plan for the next 3 hours.</div>
+                    <div class="msg-ai">AI > Here is an optimized 3-hour study block:<br>- 60 min Deep Work (No Distractions)<br>- 15 min Stretch/Hydrate<br>- 60 min Deep Work<br>- 15 min Break<br>- 30 min Review Notes</div>
+                </div>
 
-        <section class="ai-panel glass">
-            <h2>AI COPILOT</h2>
-            <textarea id="aiInput" placeholder="Ask your AI Copilot..."></textarea>
-            <button id="aiSend">SEND</button>
-            <div id="aiOutput"></div>
-        </section>
+                <div class="chat-input-area">
+                    <input type="file" id="pdf-upload" style="display: none;" accept="application/pdf">
+                    <label for="pdf-upload" class="file-upload-btn" title="Upload PDF">📎</label>
+                    <input type="text" class="chat-input" placeholder="Type command or upload file...">
+                    <button class="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
 
-    </main>
+        <div class="col-right">
+            <div class="panel pomodoro">
+                <h2 class="panel-title">Pomodoro Timer</h2>
+                <div class="pomo-time" id="timer">25:00</div>
+                <div class="pomo-controls">
+                    <button onclick="startTimer()">START</button>
+                    <button onclick="resetTimer()">RESET</button>
+                </div>
+            </div>
 
-    <script type="module" src="scripts/firebase.js"></script>
-    <script src="scripts/clock.js"></script>
-    <script src="scripts/pomodoro.js"></script>
-    <script src="scripts/tasks.js"></script>
-    <script src="scripts/music.js"></script>
-    <script src="scripts/ai.js"></script>
-    <script src="scripts/main.js"></script>
+            <div class="panel stats" style="flex: 1;">
+                <h2 class="panel-title">System Stats</h2>
+                <div class="stats-container">
+                    <div>
+                        <div class="stat-ring">
+                            <svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="28"/><circle class="progress" cx="30" cy="30" r="28" style="stroke-dashoffset: 120;"/></svg>
+                            <span class="stat-value">32%</span>
+                        </div>
+                        <div class="stat-label">CPU</div>
+                    </div>
+                    <div>
+                        <div class="stat-ring">
+                            <svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="28"/><circle class="progress" cx="30" cy="30" r="28" style="stroke-dashoffset: 70;"/></svg>
+                            <span class="stat-value">68%</span>
+                        </div>
+                        <div class="stat-label">RAM</div>
+                    </div>
+                    <div>
+                        <div class="stat-ring">
+                            <svg viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="28"/><circle class="progress" cx="30" cy="30" r="28" style="stroke-dashoffset: 20;"/></svg>
+                            <span class="stat-value">91%</span>
+                        </div>
+                        <div class="stat-label">FOCUS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="panel bottom-bar">
+            <div class="music-player">
+                <div class="album-art"></div>
+                <div class="track-info">
+                    <div class="title">Interstellar Dreams</div>
+                    <div class="artist">Lofi Astronauts</div>
+                </div>
+                <div class="pomo-controls">
+                    <button>|&lt;</button>
+                    <button>||</button>
+                    <button>&gt;|</button>
+                </div>
+                <div class="visualizer">
+                    <div class="bar" style="height: 30%"></div>
+                    <div class="bar" style="height: 70%"></div>
+                    <div class="bar" style="height: 50%"></div>
+                    <div class="bar" style="height: 90%"></div>
+                    <div class="bar" style="height: 40%"></div>
+                    <div class="bar" style="height: 80%"></div>
+                    <div class="bar" style="height: 20%"></div>
+                    <div class="bar" style="height: 60%"></div>
+                </div>
+                <div style="font-family: 'Share Tech Mono'; font-size: 0.8rem;">VOL: 65%</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+            document.getElementById('clock').textContent = 
+                `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // Timer
+        let timeLeft = 1500, timerId = null;
+        function updateTimer() {
+            let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            document.getElementById('timer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        function startTimer() {
+            if (!timerId) timerId = setInterval(() => {
+                if(timeLeft > 0) { timeLeft--; updateTimer(); }
+                else { clearInterval(timerId); alert("Session Complete."); }
+            }, 1000);
+        }
+        function resetTimer() { clearInterval(timerId); timerId = null; timeLeft = 1500; updateTimer(); }
+    </script>
 </body>
 </html>
