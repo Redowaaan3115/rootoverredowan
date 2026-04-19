@@ -1,60 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>FocusOS</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus OS — F22 Hangar Edition</title>
+
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme-blue-neon.css">
 </head>
+
 <body>
 
-  <!-- Background -->
-  <div id="bg"></div>
+    <div id="background"></div>
 
-  <!-- Main UI -->
-  <div class="container">
+    <header class="top-bar">
+        <div class="logo">F-22 HANGAR OPS</div>
+        <div class="mode-switch">
+            <button id="themeToggle">NEON MODE</button>
+        </div>
+    </header>
 
-    <h1>🔥 FocusOS</h1>
+    <main class="dashboard">
 
-    <!-- Timer -->
-    <div class="card">
-      <h2>Pomodoro Timer</h2>
-      <h1 id="timer">25:00</h1>
-      <button onclick="startTimer()">Start</button>
-      <button onclick="resetTimer()">Reset</button>
-    </div>
+        <section class="clock-panel glass">
+            <div id="clock" class="time-display">00:00:00</div>
+            <div id="date" class="date-display"></div>
+        </section>
 
-    <!-- Todo -->
-    <div class="card">
-      <h2>To-Do</h2>
-      <input id="todoInput" placeholder="Enter task & press Enter">
-      <div id="todoList"></div>
-    </div>
+        <section class="pomodoro-panel glass">
+            <h2>POMODORO ENGINE</h2>
+            <div id="pomodoro-timer">25:00</div>
+            <div class="pomodoro-controls">
+                <button id="startPomodoro">Start</button>
+                <button id="pausePomodoro">Pause</button>
+                <button id="resetPomodoro">Reset</button>
+            </div>
+        </section>
 
-    <!-- Music -->
-    <div class="card">
-      <h2>Music</h2>
-      <input type="file" id="musicUpload">
-      <audio id="player" controls></audio>
-    </div>
+        <section class="tasks-panel glass">
+            <h2>MISSIONS</h2>
+            <div class="task-input">
+                <input type="text" id="taskInput" placeholder="Enter mission objective...">
+                <button id="addTask">+</button>
+            </div>
+            <ul id="taskList"></ul>
+        </section>
 
-    <!-- AI -->
-    <div class="card">
-      <h2>AI Assistant</h2>
-      <div id="chat"></div>
-      <input id="aiInput" placeholder="Ask something...">
-      <button onclick="askAI()">Send</button>
-    </div>
+        <section class="music-panel glass">
+            <h2>COCKPIT AUDIO</h2>
+            <audio id="audioPlayer" controls></audio>
+            <input type="file" id="uploadMusic" accept="audio/*">
+        </section>
 
-    <!-- Settings -->
-    <div class="card">
-      <h2>Settings</h2>
-      <button onclick="toggleTheme()">Toggle Theme</button>
-      <input id="apiKey" placeholder="Paste Gemini API Key">
-      <button onclick="saveKey()">Save Key</button>
-    </div>
+        <section class="ai-panel glass">
+            <h2>AI COPILOT</h2>
+            <textarea id="aiInput" placeholder="Ask your AI Copilot..."></textarea>
+            <button id="aiSend">SEND</button>
+            <div id="aiOutput"></div>
+        </section>
 
-  </div>
+    </main>
 
-  <script src="script.js"></script>
+    <script type="module" src="scripts/firebase.js"></script>
+    <script src="scripts/clock.js"></script>
+    <script src="scripts/pomodoro.js"></script>
+    <script src="scripts/tasks.js"></script>
+    <script src="scripts/music.js"></script>
+    <script src="scripts/ai.js"></script>
+    <script src="scripts/main.js"></script>
+
 </body>
 </html>
