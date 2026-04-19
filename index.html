@@ -3,88 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAPTOR OS // COMBAT READY</title>
+    <title>RAPTOR OS // FLIGHT DECK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --cyan: #00f2ff;
-            --alert-red: #ff3c3c;
-            --bg: #020508;
-            --glass: rgba(6, 15, 25, 0.85);
+        /* CSS Animations for that God-Tier feel */
+        @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        :root { --cyan: #00f2ff; --bg: #020508; }
+
+        body { background: var(--bg); color: var(--cyan); font-family: 'Rajdhani'; overflow: hidden; margin: 0; }
+        
+        /* The "Activation" Overlay */
+        #boot-seq { 
+            position: fixed; inset: 0; background: black; z-index: 9999;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
         }
 
-        body {
-            background: var(--bg);
-            color: var(--cyan);
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
-            margin: 0;
-            display: flex;
-            height: 100vh;
+        .hud-grid { 
+            display: grid; grid-template-columns: 300px 1fr 300px; padding: 20px; gap: 20px; 
+            height: 100vh; opacity: 0; transition: opacity 2s;
         }
 
-        /* --- RADAR ANIMATION --- */
-        @keyframes radar-sweep {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .radar-box { position: relative; width: 100px; height: 100px; border: 1px solid var(--cyan); border-radius: 50%; overflow: hidden; }
-        .radar-line { 
-            position: absolute; top: 50%; left: 50%; width: 50%; height: 2px; background: var(--cyan); 
-            transform-origin: left; animation: radar-sweep 4s linear infinite; 
-        }
-
-        /* --- COMBAT MODE ANIMATION --- */
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 10px var(--cyan); }
-            50% { box-shadow: 0 0 25px var(--alert-red); border-color: var(--alert-red); }
-        }
-        .combat-mode { animation: pulse 2s infinite; }
-
-        /* --- LAYOUT --- */
-        .grid { display: grid; grid-template-columns: 250px 1fr 300px; gap: 15px; padding: 20px; width: 100%; }
-        .panel { background: var(--glass); border: 1px solid rgba(0, 242, 255, 0.2); padding: 20px; }
-
-        /* --- MUSIC PLAYER --- */
-        .radio-panel { grid-column: 1 / 4; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; }
-        iframe { border: none; height: 50px; width: 300px; }
-
-        .btn { padding: 10px 20px; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: var(--cyan); color: black; }
+        .panel { border: 1px solid var(--cyan); padding: 15px; background: rgba(0,20,30,0.6); animation: pulse 4s infinite; }
+        
+        /* YouTube Embed Wrapper */
+        .music-player { height: 100px; grid-column: 1 / 4; display: flex; align-items: center; gap: 20px; }
     </style>
 </head>
 <body>
 
-<div class="grid">
-    <div class="panel">
-        <h3>RADAR SCAN</h3>
-        <div class="radar-box"><div class="radar-line"></div></div>
+    <div id="boot-seq" onclick="activateDeck()">
+        <h1 style="font-family: 'Orbitron'; letter-spacing: 10px;">SYSTEM_OFFLINE // CLICK TO ENGAGE</h1>
     </div>
 
-    <div class="panel" id="main-panel">
-        <h1 id="timer">25:00</h1>
-        <button class="btn" onclick="startCombat()">ENGAGE COMBAT</button>
+    <div class="hud-grid" id="main-deck">
+        <div class="panel" style="grid-column: 2; height: 300px;">
+            <h2 style="font-family: 'Orbitron'; font-size: 0.8rem;">RAPTOR_AI_INTEL</h2>
+            <div id="chat" style="height: 200px; overflow-y: scroll;"></div>
+        </div>
+
+        <div class="panel music-player">
+            <iframe id="yt-player" width="300" height="80" 
+                src="https://www.youtube.com/embed/jfKfPfyJRdk?enablejsapi=1&autoplay=0" 
+                frameborder="0" allow="autoplay"></iframe>
+            <div>
+                <h3>MISSION SOUNDTRACK</h3>
+                <p>LOFI_STUDY_BEATS // STREAMING</p>
+            </div>
+        </div>
     </div>
 
-    <div class="panel">
-        <h3>SYSTEM_INTEL</h3>
-        <p>CPU LOAD: 12%</p>
-        <p>FOCUS LEVEL: OPTIMAL</p>
-    </div>
-
-    <div class="panel radio-panel">
-        <div>LOFI_RADIO_FEED</div>
-        <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1" allow="autoplay"></iframe>
-        <div>VOL: 65%</div>
-    </div>
-</div>
-
-<script>
-    function startCombat() {
-        const panel = document.getElementById('main-panel');
-        panel.classList.add('combat-mode');
-        // Logic to start timer goes here
-    }
-</script>
-
+    <script>
+        function activateDeck() {
+            // Remove boot screen
+            document.getElementById('boot-seq').style.display = 'none';
+            document.getElementById('main-deck').style.opacity = '1';
+            
+            // Trigger Music
+            const player = document.getElementById('yt-player');
+            player.src += "&autoplay=1";
+            
+            // Add initial animation
+            document.getElementById('chat').innerHTML = "<p>> SYSTEM: Raptor OS Active. Audio Link Established.</p>";
+        }
+    </script>
 </body>
 </html>
